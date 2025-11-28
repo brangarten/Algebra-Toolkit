@@ -10,20 +10,40 @@
 * access it in python
 */
 
-int domainElements(int least, int greatest) {
-    int size = abs(least) + abs(greatest); // incase both vars are negative we can find the number of elements in the domain
+int calculateDomainSize(int least, int greatest) {
+    int size = abs(least) + abs(greatest); 
     return size;
 }
-// ax^2 + bx + c
-int* calculateQuad(int a, int b, int c, const int minDomain, const int maxDomain) {
-    const int SIZE = domainElements(minDomain, maxDomain);
-    int* arr = (int*)malloc(SIZE * sizeof(int));
-    
-    for(int i = minDomain; i <= maxDomain; i++) {
-        arr[i] = (a * pow(i, 2)) + (b*i) + c;
-    }
 
-    return arr;
+void writeArray(int least, int greatest, int arr[]) {
+    for (int i = least; i < greatest; i++) {
+        arr[i] = arr[i];
+    }
+}
+
+// ax^2 + bx + c
+void calculateQuad(const int a, const int b, const int c, const int minDomain, const int maxDomain, int array[]) {
+        
+    const int SIZE = calculateDomainSize(minDomain, maxDomain);
+    int xValue = minDomain;
+    int yOutput = 0;
+
+    for (int i = 0; i < SIZE; i++) {
+        
+        int aRes = a * xValue;
+        aRes = pow(aRes, 2);
+
+        int bRes = b*xValue;
+
+        int cRes = c;
+    
+        yOutput = aRes + bRes + c;
+
+        array[i] = yOutput;  
+
+        printf("i: %i x: %d, aRes: %d, bRes: %d, c: %d, output: %d \n", i, xValue, aRes, bRes, cRes, yOutput);
+        xValue++;
+    }
 }
 
 int* calculateCube(int a, int b, int c, int d, const int minDomain, const int maxDomain) {

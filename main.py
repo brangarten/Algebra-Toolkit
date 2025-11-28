@@ -1,36 +1,47 @@
 import matplotlib.pyplot as plt
 import ctypes as ct
+import numpy as np
+import os
 
-toolkit = ct.CDLL("E:/Dev/Python/Algebra Toolkit/lib/toolkit.so")
+toolkit = ct.CDLL("/home/bran/Dev/Algebra-Toolkit/lib/toolkit.so")
 
-domainElements = toolkit.domainElements
-domainElements.argtypes = [ct.c_int, ct.c_int]
-domainElements.restype = ct.c_int
+calculateDomainSize = toolkit.calculateDomainSize
+calculateDomainSize.argtypes = [ct.c_int, ct.c_int]
+calculateDomainSize.restype = ct.c_int
 
 calculateQuad = toolkit.calculateQuad
-calculateQuad.argtypes = [ct.c_int, ct.c_int, ct.c_int, ct.c_int, ct.c_int]
-calculateQuad.restype = ct.POINTER(ct.c_int)
+calculateQuad.argtypes = [ct.c_int, ct.c_int, ct.c_int, ct.c_int, ct.c_int, ct.POINTER(ct.c_int)]
+calculateQuad.restype = None
+
+writeArray = toolkit.writeArray
+writeArray.argtypes = [ct.c_int, ct.c_int, ct.POINTER(ct.c_int)]
+
+minDomain : int = 0
+maxDomain : int = 0
+
 
 #Prompt for a domain interval
-minDomain = int(input("Enter min domain (UNDEF, UNDEF)\n> "))
+minDomain = int(input("Enter the least farthest domain (UNDEF, UNDEF)\n> "))
 print(' ')
 
-maxDomain = int(input("Enter max domain (" + str(minDomain) + ", UNDEF)\n> "))
+maxDomain = int(input("Enter the max farthest domain (" + str(minDomain) + ", UNDEF)\n> "))
 print(' ')
 
-sizeDomain = domainElements(minDomain, maxDomain)
+domainSize = calculateDomainSize(minDomain, maxDomain)
 
-print("Domain is (" + str(minDomain) + ',' + str(maxDomain) + ')')
-print(sizeDomain)
+print("Domain is (" + str(minDomain) + ',' + str(maxDomain) + ')' + "\nSize of Domain: " + str(domainSize))
 
-#(x-5)^2
-#x^2 - 10x + 25
-quadArr = (ct.c_int * sizeDomain)()
-calculateQuad(1, -10, 25, minDomain, maxDomain)
+# Create array & populate it
+xArray = np.arange(minDomain, maxDomain, dtype=np.int32)
 
-for i in range(len(sizeDomain)):
-    print(quadOutput)
+#int a, int b, int c, const int minDomain, const int maxDomain, int arr[]
+yArray_c = (ct.c_int * domainSize)()
+calculateQuad(1, -4, 4, minDomain, maxDomain, yArray_c)
 
+yArray = np.ctypeslib.as_array(yArray_c)
+print(xArray)
+print(yArray)
 
+plt.plot(xArray, yArray)
 
 plt.show()
